@@ -25,19 +25,18 @@
 }
 </style>
 
-<div class="row">
+<div class="row" >
     <div class="col-md-8 col-md-offset-2">
-
         <br /><br /><br /><br /><br /><br />
-        <div class="box ShimanoBox">
+        <div class="box" style="background-color:#C0C0C0">
             <div class="box-body no-padding">
                 <div class="row">
                     <div class="col-md-8 col-sm-8">
-                        <div class="pad box-pane-right " style="min-height: 200px;background-color: white">
+                        <div class="pad box-pane-right" style="min-height: 200px;background-color: #C0C0C0">
                             <div class="description-block margin-bottom">
                                 <div class="sparkbar pad" data-color="#fff"><canvas width="34" height="30" style="display: inline-block; width: 34px; height: 30px; vertical-align: top;"></canvas></div>
-                                <img src="@Url.Content("~/Content/Images/shimanoLogo.png")" width="40%"/>
-                                <h4 style="margin-top:0; color:#00A9E0">Closer to Nature, Closer to People.</h4>
+                                <img src="@Url.Content("~/Content/Images/shimanologo2021.png")" style="position: absolute;top: 50%;left: 50%;transform: translateX(-50%) translateY(-50%); max-width: 50%;max-height: 50%;"/>
+                                @*<h4 style="margin-top:0; color:#00A9E0">Closer to Nature, Closer to People.</h4>*@
                                 <div class="bottomright">
                                     
                                 </div>
@@ -88,12 +87,12 @@
                                                 </div>
                                             </div>
                                         </div>
-
-
                                         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
                                         <br />
                                         <div class="form-group">
-                                            <div class="col-md-12"><input type="checkbox" id="isWinToggle" name="isWinToggle" checked data-toggle="toggle" data-on="<i class='fa fa-windows'></i> Windows User" data-off="<i class='fa fa-user'></i> Normal User" data-onstyle="info" data-offstyle="success" data-width="100%"></div>
+                                            <div class="col-md-12 checkbox">
+                                                <input type="checkbox" id="isWinToggle" name="isWinToggle" checked data-toggle="toggle" data-on="<i class='fa fa-windows'></i> Windows User" data-off="<i class='fa fa-user'></i> Normal User" data-onstyle="info" data-offstyle="success" data-width="100%">
+                                            </div>
                                         </div>
                                         <br />
                                         <div class="form-group">

@@ -6450,6 +6450,7 @@
     <Content Include="Content\Highchart\themes\sunset.js" />
     <Content Include="Content\Highchart\themes\sunset.src.js" />
     <Content Include="Content\Images\shimanoLogo.png" />
+    <Content Include="Content\Images\shimanologo2021.png" />
     <Content Include="Content\Images\VMS.png" />
     <Content Include="Content\jquery.dataTables.min.css" />
     <Content Include="Content\kendo\fonts\DejaVu\LICENSE.txt" />
