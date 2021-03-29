@@ -1,0 +1,143 @@
+﻿<!--PHOTO-->
+<div class="modal fade" id="modalTakePhoto">
+    <div class="modal-dialog  modal-lg ">
+        <div class="modal-content">
+            <div class="modal-header">
+                <a href="#" style="color:white" class="close" data-dismiss="modal">&times;</a>
+                <h3 class="modal-title" id="titleTakePhoto">Retake Photo for </h3>
+            </div>
+            <div class="modal-body" id="myModalBodyDiv1">
+                <div class="row">
+                    <div class="col-md-6 text-center">
+                        <div class="form-group">
+                            <div id="Camera">
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-lg btn-info" id="btnCapture" onclick="webcam.capture();"><i class="fa fa-camera-retro"></i> Capture</button>
+                    </div>
+                    <div class="col-md-6 text-center">
+                        <div class="form-group">
+                            <img id="imgToSubmit" class="img-responsive" style="height:360px; width:90%;" src="@Url.Content("~/Uploads/PhotoVisitor/no_image.png")" />
+                        </div>
+                        <button type="button" class="btn btn-lg btn-info" id="btnSubmitPhoto" onclick="savePhoto()"><i class="fa fa-download"></i> Submit</button>
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <a href="#" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-times"></i> Close</a>
+            </div>
+        </div>
+    </div>
+</div>
+<!--END OF PHOTO-->
+
+<!-- ==================MODAL==============================-->
+<div class="modal fade" id="modalRegisterCard">
+    <div class="modal-dialog  modal-lg ">
+        <div class="modal-content">
+            <div class="modal-header">
+                <a href="#" style="color:white" class="close" data-dismiss="modal">&times;</a>
+                <h3 class="modal-title" id="title">Register Card Visitor</h3>
+            </div>
+            <div class="modal-body" id="myModalBodyDiv1">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            @Html.Hidden("IdRegister")
+                            @Html.Label("CardRegister", "TAP NFC Card : ")
+                            @(Html.Kendo()
+                                .TextBox()
+                                .Name("CardRegister").HtmlAttributes(new { @class = "form-control k-textboxlarge text-center" }))
+
+                            @*@Html.TextBox("searchName", "", new { @class = "form-control ShimanoBlackBox", required = "required" })*@
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <a href="#" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-times"></i> Close</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+<script id="CameraPicture">
+    function OpenModalTakePhoto() {
+        $('#modalTakePhoto').modal("show");
+        $("#Camera").empty()
+        $("#imgToSubmit").prop("src", "@Url.Content("~/Uploads/PhotoVisitor/no_image.png")")
+        onOffCamera();
+    }
+    function checkSrcPhoto(src) {
+        return $("<img>").attr('src', src);
+    }
+    function onOffCamera() {
+        document.getElementById('btnSubmitPhoto').disabled = true;
+        $("#Camera").webcam({
+            width: '100%',
+            height: 360,
+            mode: "save",
+            swffile: "@Url.Content("~/Scripts/jscam.swf")",
+            onTick: function () { },
+        onSave: function () {
+            UploadPic();
+        },
+        onCapture: function () {
+            webcam.save("@Url.Content("~/Visitor/Capture")/" + $("#detailId").val());
+        },
+        debug: function () { },
+        onLoad: function () { }
+
+    });
+    }
+    function UploadPic() {
+        DP.AJaxAll({
+        }, ("@Url.Content("~/Visitor/Rebind")/"), function (data) {
+            if (data.Success) {
+                $("#imgToSubmit").attr("src", '@Url.Content("~/Uploads/PhotoVisitor/")' + data.data);
+                $("#photoSource").val(data.data);
+                document.getElementById('btnSubmitPhoto').disabled = false;
+                toastr.success("Photo Capture successfully!", "Success");
+            }
+        })
+    }
+    function savePhoto() {
+        var id = $("#detailId").val();
+        var src = $("#photoSource").val()
+        DP.AJaxAll({
+            id: id, src: src
+        }, '@Url.Action("SavePhotoVisitor", "Visitor")', function (data) {
+            if (data.Success === true) {
+                successSaveFunction();
+                toastr.sucess(data.Message, "success")
+            }
+            else {
+                ShiMessage.error("ERROR!", data.Message);
+            }
+        })
+    }
+    function successSaveFunction() {
+        $('#modalTakePhoto').modal("hide");
+        $('#BtnSignIn').prop('disabled', false);
+        $('#detailPhoto').prop("src", '@Url.Content("~/Uploads/PhotoVisitor/")' + $("#photoSource").val())
+    }
+    function CheckPhoto(src) {
+        var srcDef = '@Url.Content("~/Uploads/PhotoVisitor/no_image.png")';
+        checkSrcPhoto(src)
+          .on("error", function (e) {
+              $('#detailPhoto').attr('src', srcDef)
+              $('#BtnSignIn').prop("disabled", true);
+          })
+          .on("load", function (e) {
+              $('#detailPhoto').attr('src', src)
+          })
+    }
+</script>

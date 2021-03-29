@@ -1,0 +1,332 @@
+﻿@using VMS.Library;
+@using System.Configuration;
+@{
+    Layout = null;
+}
+    
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+    @Styles.Render("~/Css")
+    @Styles.Render("~/kendoCSS")
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/kendoJS")
+    @*@Scripts.Render("~/Jquery")*@
+    @Scripts.Render("~/jQueryVal")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/Js")
+    @Scripts.Render("~/Scripts/prototype.js")
+    @Scripts.Render("~/Scripts/ShimanoObject.js")
+    @Scripts.Render("~/Scripts/ShiMessage.js")
+
+
+    
+    <style>
+        html *
+{
+
+   font-family: Quicksand;
+}
+        table.dataTable thead tr {
+  background-color: #30505F;
+  color:white
+}
+        .ShimanoBlackBox {
+            background-color: #30505F;
+            color: white;
+        }
+        .ShimanoBox{
+            background-color: white;
+            color: black;
+            box-shadow: 3px 3px 5px grey;
+        }
+        .ShimanoTextBox{
+            border-radius: 10px;
+        }
+
+        .ShimanoBorder {
+            border: outset 5px #3c8dbc;
+        }
+        .form-control[disabled], .form-control[readonly], fieldset[disabled] .form-control{
+            background-color: white;
+        }
+        .k-content > .k-dropdown, .k-picker-wrap, .k-textbox, .k-multiselect {
+            font-size:14px
+        }
+        .k-calendar-container, .k-popup, .k-group, .k-reset{
+            font-size:14px
+        }
+        .load-wrapp {
+            float: left;
+            width: 100px;
+            height: 40px;
+            margin: 0 10px 10px 0;
+
+            border-radius: 5px;
+            text-align: center;
+
+        }
+
+        .load-wrapp p {padding: 0 0 20px;}
+        .load-wrapp:last-child {margin-right: 0;}
+
+        .line {
+            display: inline-block;
+            width: 15px;
+            height: 20px;
+            border-radius: 15px;
+            background-color: #4b9cdb;
+        }
+        .load-3 .line:nth-last-child(1) {animation: loadingC .6s .1s linear infinite;}
+        .load-3 .line:nth-last-child(2) {animation: loadingC .6s .2s linear infinite;}
+        .load-3 .line:nth-last-child(3) {animation: loadingC .6s .3s linear infinite;}
+        @@keyframes loadingC {
+            0 {transform: translate(0,0);}
+            50% {transform: translate(0,15px);}
+            100% {transform: translate(0,0);}
+        }
+
+    </style>
+
+</head>
+<body class="hold-transition skin-blue-light  sidebar-mini">
+    <!-- Site wrapper -->
+    <div class="wrapper">
+        <header class="main-header" >
+            <!-- Logo -->
+            <a href="@Url.Action("Index", "Dashboard")" class="logo" style="background-color: @ConfigurationManager.AppSettings["BGMenuLive"]">
+                <!-- mini logo for sidebar mini 50x50 pixels -->
+                <span class="logo-mini"><b>@ConfigurationManager.AppSettings["PlantAbbv"]</b></span>
+                <!-- logo for regular state and mobile devices -->
+                <span class="logo-lg">
+                    VisiBukku<br />
+                @*<img src="@Url.Content("~/Content/Images/shimanoLogo.png")" class="img-responsive" width="60%"/>*@
+                </span>
+            </a>
+            <!-- Header Navbar: style can be found in header.less -->
+            <nav class="navbar navbar-static-top" style="background-color: @ConfigurationManager.AppSettings["BGMenuLive"]">
+                <!-- Sidebar toggle button-->
+                <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </a>
+
+                <div class="navbar-custom-menu">
+                    <ul class="nav navbar-nav">
+
+                        <!-- User Account: style can be found in dropdown.less -->
+                        <li class="dropdown user user-menu">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                <i class="fa fa-user"></i>
+                                <span class="hidden-xs">@*@Session["UseNam"]*@</span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <!-- User image -->
+                                <li class="user-header" style="background-color:@ConfigurationManager.AppSettings["BGMenuLive"];">
+                                    <i class="fa fa-2x fa-user"></i>
+
+                                    
+                                        @if (Sessions.GetUserName() != null)
+                                        {
+                                            <p>
+                                                @Sessions.GetUserName()
+                                                <small>@Sessions.GetBusFunc()</small>
+                                            </p>
+                                            if (int.Parse(Sessions.GetUseLev()) < 3)
+                                            {
+                                               <span style="color:white">Delegate</span>
+                                                <input type="checkbox" data-width="100%" id="chkDelegate" data-toggle="toggle" data-on="Active" data-off="Deactive" data-onstyle="success" data-offstyle="danger">
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <small>NONE</small>
+                                        }
+                                        @*@Session["UseNam"] - @Session["UseDep"]*@
+
+                                    
+
+                                    
+                                </li>
+                                <!-- Menu Body -->
+                                <!-- Menu Footer-->
+                                <li class="user-footer">
+                                    <div class="pull-left">
+                                        
+                                    </div>
+                                    <div class="pull-right">
+                                        @if (Sessions.GetUserName() != null)
+                                        {
+                                            <a href="@Url.Action("Logout", "Home")" class="btn btn-default btn-flat">Sign out</a>
+                                        }
+                                        else
+                                        {
+                                            <a href="@Url.Action("Logout", "Home")" class="btn btn-default btn-flat">Sign In</a>
+                                        }
+                                        
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </header>
+        <!-- =============================================== -->
+        <!-- Left side column. contains the sidebar -->
+        <aside class="main-sidebar">
+            <!-- sidebar: style can be found in sidebar.less -->
+            <section class="sidebar">
+                <!-- Sidebar user panel -->
+                <div class="user-panel">
+                    <div class="pull-left image">
+                        <i class="fa fa-2x fa-user"></i>
+                    </div>
+                    <div class="pull-left info">
+                        <p>@*@Session["UseNam"]*@</p>
+                        <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
+                    </div>
+                </div>
+
+                @{
+                    Html.RenderAction("GetMenuForUser", "Home");
+                    //Html.RenderPartial("_SideBar");
+                }
+            </section>
+            <!-- /.sidebar -->
+        </aside>
+        <!-- =============================================== -->
+        <!-- Content Wrapper. Contains page content -->
+        <div class="content-wrapper">
+            <!-- Main content -->
+            <section class="content" id="page-content">
+                <!-- Default box -->
+                @RenderBody()
+                <!-- /.box -->
+            </section>
+
+        </div>
+        <!-- /.content-wrapper -->
+        <footer class="main-footer ShimanoBlackBox">
+            <div class="pull-right hidden-xs">
+                VisiBukku
+                @*<img src="~/Content/Images/shimanoLogo.png" class="img-responsive" width="200" />*@
+            </div>
+            <strong>Copyright &copy; @DateTime.Now.ToString("yyyy")  
+            <a href="https://sbm-vmiis/apps">PT SHIMANO BATAM</a>.</strong> All rights
+            reserved. <b>Version</b> @ConfigurationManager.AppSettings["VersionSystem"]
+        </footer>
+    </div>
+    <!-- ./wrapper -->
+    <!-- jQuery 3 -->
+
+    <div>
+    </div>
+    @if (TempData["SUCCESSLOGIN"] != null)
+    {
+        <script type="text/javascript">
+                toastr.success('@TempData["SUCCESSLOGIN"]',"SUCCESS");
+        </script>
+    }
+    <script>
+        var isCheck = false;
+        $(function () {
+            $('#chkDelegate').change(function () {
+                var isDelegate = $(this).prop('checked');
+                DP.AJaxAll({
+                    isDelegate:isDelegate
+                }, '@Url.Action("ChangeDelegate", "Approval")', function (data) {
+                    if (data.Success) {
+                        if (isCheck) {
+                            var word = "Success "
+                                + (isDelegate ? "Active " : "Remove")
+                                + " The Delegate "
+                                + (isDelegate ? "To " : "From ")
+                                + (data.data)
+                            toastr.success(word);
+
+                        }
+                        else {
+                            isCheck = true;
+                        }
+                    }
+                })
+                $.ajax({
+                    url: '@Url.Action("ChangeDelegate", "Approval")',
+                    cache: false,
+                    type: "POST",
+                    data: { isDelegate: isDelegate },
+                    success: function (data) {
+                        
+
+                    },
+                    error: function () {
+                        ShiMessage.error("Something wrong with this, please call IT!", "ERROR!");
+                    }
+
+                })
+            })
+        })
+        function checkDelegate() {
+            $.ajax({
+                url: '@Url.Action("CheckDelegate", "Approval")',
+                cache: false,
+                type: "POST",
+                success: function (data) {
+                    if (data.Success === true) {
+                        $('#chkDelegate').bootstrapToggle('on')
+                    }
+                    else {
+                        $('#chkDelegate').bootstrapToggle('off')
+                    }
+
+                },
+                error: function () {
+                    toastr.error("Something wrong with this, please call IT!", "ERROR!");
+                }
+
+            })
+        }
+    </script>
+    <script>
+        $(document).ready(function () {
+            checkDelegate();
+            //$(".Navigation").click(function (e) {
+            //    e.preventDefault(); // prevent default link button redirect behaviour     
+            //    var url = $(this).attr("href");
+            //    $('#page-content').load(url);
+            //});
+        })
+   
+    </script>
+    <script>function VMSGlobal() {}
+        VMSGlobal.RemoveCookies = "@Url.Action("RemoveCookies", "Home")";
+    </script>
+    <script>
+        //$(document).ready(function () {
+        //    $('a[href^="/"]').on('click', function (e) {
+        //        Sys.LoadingShow();
+        //    });
+        //});
+        $(document).ready(function () {
+            $(document).ajaxError(function (event, request, settings) {
+                if (request.responseText != undefined) {
+                    var d = JSON.parse(request.responseText);
+                    if (d.msg == "SESSION TIMEOUT") {
+                        window.location.href = "@Url.Action("Logout", "Home")"
+                    }
+                    ShiMessage.error("AJAX ERROR!", "Ajax error :" + d.msg);
+                }
+            });
+
+        });
+    </script>
+
+
+</body>
+</html>

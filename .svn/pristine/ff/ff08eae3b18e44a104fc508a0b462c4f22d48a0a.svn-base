@@ -1,0 +1,356 @@
+﻿@model VMS.Library.Models.User
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>@ViewBag.Title</title>
+    @Styles.Render("~/Css")
+    @Styles.Render("~/kendoCSS")
+    @Scripts.Render("~/Jquery")
+    @Scripts.Render("~/Js")
+    @Scripts.Render("~/kendoJS")
+    @Scripts.Render("~/Highchart")
+    <style>
+        .k-content > .k-dropdown, .k-picker-wrap, .k-textbox, .k-multiselect, .k-autocomplete, .k-input {
+            font-size: 14px;
+        }
+
+        .ShimanoWhite {
+            background-color: white;
+            color: black;
+        }
+
+        .ShimanoWhiteBorder {
+            border: outset 8px #808080;
+        }
+
+        .ShimanoBox {
+            background-color: white;
+            color: black;
+            box-shadow: 3px 3px 5px grey;
+        }
+
+        .ShimanoTextBox {
+            border-radius: 10px;
+        }
+    </style>
+    <style>
+        .bottomright {
+            position: absolute;
+            bottom: 8px;
+            right: 20%;
+            font-size: 18px;
+        }
+    </style>
+</head>
+
+<body class="hold-transition skin-blue layout-top-nav">
+    <div class="wrapper">
+        <header class="main-header">
+            <nav class="navbar navbar-static-top" style="background-color:#373737">
+                <div class="container">
+
+                    <!-- Collect the nav links, forms, and other content for toggling -->
+                    <div class="collapse navbar-collapse pull-left" id="navbar-collapse">
+
+                    </div>
+                    <!-- /.navbar-collapse -->
+                    <!-- Navbar Right Menu -->
+                    <div class="navbar-custom-menu">
+                        <ul class="nav navbar-nav">
+                            <!-- User Account Menu -->
+                            <li class="dropdown user user-menu">
+                                <!-- Menu Toggle Button -->
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                    <!-- The user image in the navbar-->
+                                    <i class="fa fa-building"></i>
+                                    <!-- hidden-xs hides the username on small devices so only the image appears. -->
+                                    <span class="hidden-xs">Visitor Management System</span>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <!-- User image -->
+                                    <li class="user-header" style="background-color:#323232;">
+                                        <i class="fa fa-2x fa-user"></i>
+
+                                    </li>
+                                    <!-- Menu Body -->
+                                    <!-- Menu Footer-->
+                                    <li class="user-footer">
+                                        <div class="pull-left">
+
+                                        </div>
+
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                    <!-- /.navbar-custom-menu -->
+                </div>
+                <!-- /.container-fluid -->
+            </nav>
+        </header>
+        <!-- Full Width Column -->
+        <div class="content-wrapper" style="background-color:white">
+
+
+            <!-- Main content -->
+            <section class="content">
+                <div class="row">
+                    <div class="col-md-8 col-md-offset-2">
+
+                        <br /><br />
+                        <div class="box ShimanoBox">
+                            <div class="box-body no-padding">
+                                <div class="row">
+                                    <div class="col-md-8 col-sm-8">
+                                        <div class="pad box-pane-right bg-black" style="min-height: 650px">
+                                            <div class="description-block margin-bottom">
+                                                <div class="sparkbar pad" data-color="#fff"><canvas width="34" height="30" style="display: inline-block; width: 34px; height: 30px; vertical-align: top;"></canvas></div>
+                                                <img src="@Url.Content("~/Content/Images/shimanoLogo.png")" width="40%" />
+                                                <h4 style="margin-top:0">Closer to Nature, Closer to People</h4>
+                                                <div class="bottomright">
+                                                    <p>
+                                                        @*<img src="@Url.Content("~/Content/Images/VMS.png")" width="25%" class="img-responsive" />*@
+
+                                                    </p>
+                                                </div>
+                                                @*<marquee behavior="scroll" direction="up" style="height:200px;" class="text-center" scrollamount="2">
+                                                        <b>Mission Statement</b><br />
+                                                        To promote health and happiness through the enjoyment of nature and the world around us.
+                                                        <br /><br />
+                                                        <b>Business Policy</b><br />
+                                                        We strive to provide quality products and services that are reliable and trustworthy.<br />
+                                                        We pledge to continually increase our corporate value and to ensure corporate management worthy of the trust placed in us.<br />
+                                                        We strive to provide a fair and vibrant work environment where all can share in the pleasure and satisfaction that comes with achievement.<br />
+                                                        We pledge to be a good corporate citizen, by preserving the environment and contributing to the prosperity of our community.<br />
+                                                    </marquee>*@
+                                            </div>
+                                            <!-- /.description-block -->
+                                        </div>
+                                    </div>
+                                    <!-- /.col -->
+                                    <div class="col-md-4 col-sm-4">
+                                        <div class="pad box-pane-right bg-white" style="min-height: 280px">
+                                            <div class="description-block margin-bottom">
+                                                <div class="col-md-12 text-justify">
+                                                    @using (Html.BeginForm("SelfRegister", "User", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", @autocomplete = "off", role = "form", @id = "formRegister" }))
+                                                    {
+                                                        <div class="row">
+                                                            <div class="col-md-12">
+                                                                <div class="k-content">
+                                                                    @Html.LabelFor(model => model.UseID, "User Id (Windows Login): ")<br />
+                                                                    @(Html.Kendo()
+.TextBoxFor(model => model.UseID)
+.HtmlAttributes(new { @class = "form-control", style = "width:100%", required = "required", data_required_msg = "Please Fill the User Id" }))
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-md-12">
+                                                                <div class="k-content">
+                                                                    @Html.LabelFor(model => model.UsePass, "Password (Windows Login): ")<br />
+                                                                    @(Html.Kendo()
+.TextBoxFor(model => model.UseID)
+.HtmlAttributes(new { @class = "form-control", style = "width:100%", required = "required", data_required_msg = "Please Fill Password", type = "password" }))
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-md-12">
+                                                                <div class="k-content">
+                                                                    @Html.LabelFor(model => model.UseNam, "Full Name ")<br />
+                                                                    @(Html.Kendo()
+.TextBoxFor(model => model.UseNam)
+.HtmlAttributes(new { @class = "form-control", style = "width:100%", required = "required", data_required_msg = "Please Fill the Full Name" }))
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-md-12">
+                                                                <div class="k-content">
+                                                                    @Html.LabelFor(model => model.UsePlant, "Plant : ")<br />
+                                                                    @(Html.Kendo().ComboBoxFor(model => model.UsePlant)
+                  .Filter("contains")
+                  .Placeholder("Select Plant...")
+                  .DataTextField("plantName")
+                  .DataValueField("plantId")
+                  .DataSource(source =>
+                    {
+                        source.Read(read =>
+                        {
+                            read.Action("getPlantList", "MasterData");
+                        });
+                    }).Events(e => e.Change("PopulateDepartment"))
+                  .Suggest(true)
+                  .HtmlAttributes(new { style = "width:100%;" })
+                                                                    )
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-md-12">
+                                                                <div class="k-content">
+                                                                    @Html.LabelFor(model => model.UseDep, "Department : ")<br />
+                                                                    @(Html.Kendo().ComboBoxFor(model => model.UseDep)
+                  .Filter("contains")
+                  .Placeholder("Select Department...")
+                  .DataTextField("DeptName")
+                  .DataValueField("Dept")
+                  .DataSource(source =>
+                    {
+                        source.Read(read =>
+                        {
+                            read.Action("GetDepartmentforDDList", "MasterData").Data("GetPlants");
+                        });
+                    }).AutoBind(false)
+                  .HtmlAttributes(new { style = "width:100%;" })
+                                                                    )
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="row">
+                                                            <div class="col-md-12">
+                                                                <div class="k-content">
+                                                                    @Html.LabelFor(model => model.UseEmail, "Email: ")<br />
+                                                                    @(Html.Kendo()
+.TextBoxFor(model => model.UseEmail)
+.HtmlAttributes(new { @class = "form-control", style = "width:100%" }))
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-md-12">
+                                                                <div class="k-content">
+                                                                    @Html.LabelFor(model => model.UseIC, "User IC: ")<br />
+                                                                    @(Html.Kendo()
+.TextBoxFor(model => model.UseIC)
+.HtmlAttributes(new { @class = "form-control", style = "width:100%" }))
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-md-12">
+                                                                <div class="k-content">
+                                                                    @Html.LabelFor(model => model.UseTel, "Ext No: ")<br />
+                                                                    @(Html.Kendo()
+.TextBoxFor(model => model.UseTel)
+.HtmlAttributes(new { @class = "form-control", style = "width:100%" }))
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <br />
+                                                        <div class="row">
+                                                            <div class="col-md-12">
+                                                                @Html.Kendo().CheckBox().Name("Agree") I have read and agree to the <a href="#">Privacy Policy</a> and <a href="#">Safety Introduction</a>
+                                                            </div>
+                                                        </div><br />
+                                                        <div class="row" id="btnGroup">
+                                                            <div class="col-md-6">
+                                                                <button class="btn btn-success btn-lg" type="submit" id="btnSaveRegister"><i class="fa fa-save"></i> Save</button>
+
+                                                            </div>
+
+                                                            <div class="col-md-6">
+                                                                <button class="btn btn-danger btn-lg" type="button" onclick="clearForm()" id="btnClearRegister"><i class="fa fa-trash"></i> Clear</button>
+                                                            </div>
+
+                                                        </div>
+                                                        <div class="row align-items-center" id="loadingSubmit" hidden="hidden">
+                                                            <div class="load-wrapp">
+                                                                <div class="load-3">
+                                                                    <div class="line"></div>
+                                                                    <div class="line"></div>
+                                                                    <div class="line"></div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    }
+
+                                                </div>
+
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                    <!-- /.col -->
+                                </div>
+                                <!-- /.row -->
+                            </div>
+                            <!-- /.box-body -->
+                        </div>
+
+
+                    </div>
+                </div>
+
+                <!-- /.box -->
+            </section>
+            <!-- /.content -->
+        </div>
+        <!-- /.content-wrapper -->
+        <footer class="main-footer">
+            <div class="pull-right hidden-xs">
+                <b>Version</b> 1.0.0
+            </div>
+            <strong>Copyright &copy; @DateTime.Now.ToString("yyyy") <a href="@Url.Action("NewVisitor","Visitor")">PT SHIMANO BATAM</a>.</strong> All rights
+            reserved.
+        </footer>
+    </div>
+
+    @*<script>
+        function filterData() {
+            return {
+                text: $("#@Html.IdFor(m => m.Visitor.Company)").val()
+            };
+        }
+        $(document).ready(function () {
+            $('#@Html.IdFor(m=>m.Visitor.Phone)').keyup(function () {
+                var numbers = $(this).val();
+                $(this).val(numbers.replace(/\D/, ''));
+            });
+        });
+    </script>*@
+    @if (TempData["ISSUCCES"] != null)
+    {
+        if (bool.Parse(TempData["ISSUCCES"].ToString()) == true)
+        {
+            <script>
+            toastr.success('@TempData["MESSAGE"].ToString()', "SUCCESS!");
+            </script>
+        }
+        else
+        {
+            <script>
+            toastr.error('@TempData["MESSAGE"].ToString()', "Error!");
+            </script>
+        }
+    }
+    <script>
+        $(function() {
+            $("#formRegister").submit(function (e) {
+                $("#btnSaveRegister").prop("disabled", true);
+                $("#btnGroup").hide("")
+                $("#loadingSubmit").show("")
+            })
+        })
+        @*function clearForm() {
+            $("#@Html.IdFor(m=>m.Visitor.FullName)").val("");
+            $("#@Html.IdFor(m=>m.Visitor.Company)").val("");
+            $("#@Html.IdFor(m=>m.Visitor.JobDesc)").val("");
+            $("#@Html.IdFor(m=>m.Visitor.Email)").val("");
+            $("#@Html.IdFor(m=>m.Visitor.Phone)").val("");
+        }*@
+        function GetPlants() {
+            return {
+                Plant: $("#@Html.IdFor(m=>m.UsePlant)").val()
+            }
+        }
+        function PopulateDepartment() {
+            $("#@Html.IdFor(m=>m.UseDep)").data("kendoComboBox").dataSource.read();
+        }
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,192 @@
+﻿using Kendo.Mvc.Extensions;
+using Kendo.Mvc.UI;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using VMS.Web.Attribute;
+using VMS.Web.Models;
+using ClosedXML.Excel;
+using System.IO;
+
+namespace VMS.Web.Controllers
+{
+    
+    public class MasterDataController : Controller
+    {
+        MasterDataAction _mdAction = new MasterDataAction();
+        VisitorAction _visitorAction = new VisitorAction();
+
+        // GET: MasterData
+        [ShimanoCustom]
+        public ActionResult Area()
+        {
+            return View();
+        }
+        [ShimanoCustom]
+        public ActionResult VisitorType()
+        {
+            return View();
+        }
+        [ShimanoCustom]
+        public ActionResult Visitor()
+        {
+            return View();
+        }
+
+        //
+        public JsonResult getAreaList(string plant, string visitType)
+        {
+            var _visitorArea = _mdAction.GetAreaforDDList(plant, visitType);
+            return Json(_visitorArea, JsonRequestBehavior.AllowGet);
+        }
+        public JsonResult SaveArea(AreaVisitor AreaVisitor, string OldAreaId, string OldVisitorType)
+        {
+            AreaVisitor.UpdateBy = Session["UseID"].ToString();
+            return Json(_mdAction.SaveArea(AreaVisitor, OldAreaId, OldVisitorType));
+        }
+        public JsonResult SaveVisitorType(VisitType VisitType)
+        {
+            VisitType.UpdateBy = Session["UseID"].ToString();
+            return Json(_mdAction.SaveVisitorType(VisitType), JsonRequestBehavior.AllowGet);
+        }
+        public JsonResult getPlantList()
+        {
+            return Json(_mdAction.GetPlantforDDList(""), JsonRequestBehavior.AllowGet);
+        }
+        public JsonResult getPlantMDM()
+        {
+            return Json(_mdAction.GetPlantMDMList(""), JsonRequestBehavior.AllowGet);
+        }
+        public JsonResult getVisitTypeList(string text = "")
+        {
+            return Json(_mdAction.GetVisitTypeforDDList(text), JsonRequestBehavior.AllowGet);
+        }
+        [HttpPost]
+        public JsonResult ChangeStatus(string TableName, string ColumnName, string Id)
+        {
+            return Json(_mdAction.ChangeStatusMasterData(TableName, ColumnName, Id, Session["UseID"].ToString()), JsonRequestBehavior.AllowGet);
+        }
+
+
+        public JsonResult GetAreaDatatables(string AreaName)
+        {
+            try
+            {
+                //Creating instance of DatabaseContext class
+                var draw = Request.Form.GetValues("draw").FirstOrDefault();
+                var start = Request.Form.GetValues("start").FirstOrDefault();
+                var length = Request.Form.GetValues("length").FirstOrDefault();
+                var sortColumn = Request.Form.GetValues("columns[" + Request.Form.GetValues("order[0][column]").FirstOrDefault() + "][name]").FirstOrDefault();
+                var sortColumnDir = Request.Form.GetValues("order[0][dir]").FirstOrDefault();
+                var searchValue = Request.Form.GetValues("search[value]").FirstOrDefault();
+                
+                //Paging Size (10,20,50,100)  
+                int pageSize = length != null ? Convert.ToInt32(length) : 0;
+                int skip = start != null ? Convert.ToInt32(start) : 0;
+                int recordsTotal = 0;
+
+                var _Areas = _mdAction.GetAreaDatatables(AreaName);
+
+                //total number of rows count   
+                recordsTotal = _Areas.Count();
+                //Paging   
+                var data = _Areas.Skip(skip).Take(pageSize).ToList();
+
+                return Json(new { draw = draw, recordsFiltered = recordsTotal, recordsTotal = recordsTotal, data = data });
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        public JsonResult GetAVisitorTypeDatatables()
+        {
+            try
+            {
+                var draw = Request.Form.GetValues("draw").FirstOrDefault();
+                var start = Request.Form.GetValues("start").FirstOrDefault();
+                var length = Request.Form.GetValues("length").FirstOrDefault();
+                var sortColumn = Request.Form.GetValues("columns[" + Request.Form.GetValues("order[0][column]").FirstOrDefault() + "][name]").FirstOrDefault();
+                var sortColumnDir = Request.Form.GetValues("order[0][dir]").FirstOrDefault();
+                var searchValue = Request.Form.GetValues("search[value]").FirstOrDefault();
+                //Creating instance of DatabaseContext class
+
+                //Paging Size (10,20,50,100)  
+                int pageSize = length != null ? Convert.ToInt32(length) : 0;
+                int skip = start != null ? Convert.ToInt32(start) : 0;
+                int recordsTotal = 0;
+
+                var _visitorType = _mdAction.GetVisitorTypeDatatables();
+
+                //total number of rows count   
+                recordsTotal = _visitorType.Count();
+                //Paging   
+                var data = _visitorType.Skip(skip).Take(pageSize).ToList();
+
+                return Json(new { draw = draw, recordsFiltered = recordsTotal, recordsTotal = recordsTotal, data = data });
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        public JsonResult GetVisitorTypeDetail(string Id)
+        {
+            return Json(_mdAction.GetVisitorTypeDetail(Id), JsonRequestBehavior.AllowGet);
+        }
+        public JsonResult GetAreaDetail(string AreaId, string VisitorType)
+        {
+            return Json(_mdAction.GetAreaDetail(AreaId, VisitorType), JsonRequestBehavior.AllowGet);
+        }
+
+
+        public JsonResult GetUserLevelCodLst()
+        {
+            return Json(_mdAction.GetCodLst("VisitorMSUseLev"), JsonRequestBehavior.AllowGet);
+        }
+        public JsonResult GetDepartmentforDDList(string Plant)
+        {
+            return Json(_mdAction.GetDepartmentforDDList(Plant), JsonRequestBehavior.AllowGet);
+        }
+        public JsonResult GetVisitorDatatables(string Name)
+        {
+            try
+            {
+                var draw = Request.Form.GetValues("draw").FirstOrDefault();
+                var start = Request.Form.GetValues("start").FirstOrDefault();
+                var length = Request.Form.GetValues("length").FirstOrDefault();
+                var sortColumn = Request.Form.GetValues("columns[" + Request.Form.GetValues("order[0][column]").FirstOrDefault() + "][name]").FirstOrDefault();
+                var sortColumnDir = Request.Form.GetValues("order[0][dir]").FirstOrDefault();
+                var searchValue = Request.Form.GetValues("search[value]").FirstOrDefault();
+                //Creating instance of DatabaseContext class
+
+                //Paging Size (10,20,50,100)  
+                int pageSize = length != null ? Convert.ToInt32(length) : 0;
+                int skip = start != null ? Convert.ToInt32(start) : 0;
+                int recordsTotal = 0;
+
+                var _Visitor = _visitorAction.GetAllVisitor(Name);
+
+                //total number of rows count   
+                recordsTotal = _Visitor.Count();
+                //Paging   
+                var data = _Visitor.Skip(skip).Take(pageSize).ToList();
+
+                return Json(new { draw = draw, recordsFiltered = recordsTotal, recordsTotal = recordsTotal, data = data });
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        public JsonResult GetVisitorMasterData([DataSourceRequest] DataSourceRequest request, string Name)
+        {
+            return Json(_visitorAction.GetVisitorMasterData(Name).ToDataSourceResult(request), JsonRequestBehavior.AllowGet);
+        }
+
+        
+    }
+}

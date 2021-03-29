@@ -1,0 +1,196 @@
+﻿using System;
+using System.Linq;
+using System.Web.Mvc;
+using VMS.Web.Models;
+using VMS.Web.Attribute;
+using VMS.Library;
+using Kendo.Mvc.UI;
+using Kendo.Mvc.Extensions;
+using ClosedXML.Excel;
+using System.IO;
+using System.Data;
+using Kendo.Mvc.Extensions;
+using Kendo.Mvc.UI;
+
+namespace VMS.Web.Controllers
+{
+
+    public class UserController : SController
+    {
+        // GET: User
+        WindowsAuth winAuth = new WindowsAuth();
+        UserAction userAct = new UserAction();
+
+        public ActionResult Index()
+        {
+            return View();
+        }
+
+       
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+
+        public ActionResult UserList()
+        {
+            return View();
+        }
+        public JsonResult GetUsersList([DataSourceRequest] DataSourceRequest request, string Plant)
+        {
+            return Json(userAct.GetUsersList(Plant).ToDataSourceResult(request), JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult GetUserDetail(string UseID)
+        {
+            return Json(userAct.GetUserDetail(UseID), JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult GetBusfuncsDL()
+        {
+            return Json(userAct.GetBusfunc(), JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult GetApprovalGroupsDL()
+        {
+            return Json(userAct.GetAprrovalGroupsDL(), JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult PostUsers(User NewData, User OldData)
+        {
+            return Json(userAct.PostNewUser(NewData, OldData), JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult PostChangeUserStatus(string UseID)
+        {
+            return Json(userAct.PostChangeUserStatus(UseID), JsonRequestBehavior.AllowGet);
+        }
+
+        public ActionResult UserAccessRight()
+        {
+            return View();
+        }
+
+        public JsonResult UpdateUserAccess()
+        {
+            return Json("");
+        }
+
+        public JsonResult ShowListofAccess(string BusFunc)
+        {
+            try
+            {
+                var draw = Request.Form.GetValues("draw").FirstOrDefault();
+                var start = Request.Form.GetValues("start").FirstOrDefault();
+                var length = Request.Form.GetValues("length").FirstOrDefault();
+                var sortColumn = Request.Form.GetValues("columns[" + Request.Form.GetValues("order[0][column]").FirstOrDefault() + "][name]").FirstOrDefault();
+                var sortColumnDir = Request.Form.GetValues("order[0][dir]").FirstOrDefault();
+                var searchValue = Request.Form.GetValues("search[value]").FirstOrDefault();
+                //Creating instance of DatabaseContext class
+
+                //Paging Size (10,20,50,100)  
+                int pageSize = length != null ? Convert.ToInt32(length) : 0;
+                int skip = start != null ? Convert.ToInt32(start) : 0;
+                int recordsTotal = 0;
+                var _menuList = userAct.GetMenuListEdit(BusFunc);
+
+                //total number of rows count   
+                recordsTotal = _menuList.Count();
+                //Paging   
+                var data = _menuList.Skip(skip).Take(pageSize).ToList();
+
+                return Json(new { draw = draw, recordsFiltered = recordsTotal, recordsTotal = recordsTotal, data = data });
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        public FileResult GetComparDiffDept()
+        {
+            using (XLWorkbook wb = new XLWorkbook())
+            {
+                DataTable dt = new DataTable("CompareDepartment");
+                dt = userAct.GetComparDiffDept().data;
+                wb.Worksheets.Add(dt, "CompareDepartment");
+                using (MemoryStream stream = new MemoryStream())
+                {
+                    wb.SaveAs(stream);
+                    return File(stream.ToArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                       DateTime.Now.ToString("yyMMdd") + "_CompareDeparment" + DateTime.Now.ToString("yyyyMMdd") + ".xlsx");
+                }
+            }
+        }
+
+        //[ShimanoSession]
+        //public JsonResult SaveNewUser(User User, string OldUseID)
+        //{
+        //    if (userAct.CheckUser(User.UseID).Rows.Count > 1 && (OldUseID.ToUpper() == "NEW"))
+        //    {
+        //        return Json(new VMSRes<string> { Success = false, Message = "User Id Has been Registered Before" }, JsonRequestBehavior.AllowGet);
+        //    }
+        //    if (userAct.CheckUser(OldUseID).Rows.Count > 1 && (User.UseID != OldUseID))
+        //    {
+        //        return Json(new VMSRes<string> { Success = false, Message = "User Id Has been Registered Before" }, JsonRequestBehavior.AllowGet);
+        //    }
+        //    return Json(userAct.PostNewUser(User, OldUseID), JsonRequestBehavior.AllowGet);
+        //}
+        public JsonResult GetUserFromAD(string Plant = "2300")
+        {
+
+            return Json(new VMSRes<string>
+            {
+                Success = true,
+                Message = "Total Insert: " + userAct.GetUserFromAD(Plant).data + " Person(s)"
+            }, JsonRequestBehavior.AllowGet);
+        }
+        public JsonResult GetCheckUserGroup()
+        {
+            var UserDept = Session["UseDep"].ToString();
+            return Json(userAct.GetCheckUserGroup(UserDept), JsonRequestBehavior.AllowGet);
+        }
+        public ActionResult SelfRegister()
+        {
+            return View();
+        }
+        //[HttpPost]
+        //[AllowAnonymous]
+        //[ValidateAntiForgeryToken]
+        //public ActionResult SelfRegister(User User)
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        TempData["ERROR"] = "Please Fill all Required!";
+        //        return View(User);
+        //    }
+        //    var data = userAct.GetLoginWinAuth(User.UseID, User.UsePass);
+        //    if (data != null)
+        //    {
+        //        if (userAct.CheckUser(User.UseID).Rows.Count > 0)
+        //        {
+        //            TempData["ERROR"] = "Your Username has been Registered Before!";
+        //            return View(User);
+        //        }
+        //    }
+        //    User.BusFunc = "SYSTEM-USER";
+        //    var _data = userAct.PostNewUser(User, "NEW");
+        //    if (_data.Success == true)
+        //    {
+        //        TempData["SUCCESSLOGIN"] = "Success Access!- Login - " + DateTime.Now.ToString() + "";
+        //        Session["UseID"] = User.UseID;
+        //        Session["UseNam"] = User.UseNam;
+        //        Session["UseDep"] = User.UseDep;
+        //        Session["BusFunc"] = User.BusFunc;
+        //        Session["UseLev"] = User.UseLev;
+        //        Session["UsePlant"] = User.UsePlant;
+        //        Session["MenuList"] = userAct.GetMenuList(User.BusFunc);
+        //        return RedirectToAction("Index", "Dashboard");
+        //    }
+        //    return View();
+            
+        //}
+
+
+        
+    }
+}

@@ -1,0 +1,195 @@
+﻿@model VMS.Web.Models.ImportExcel
+@using VMS.Web.Models
+@{
+    ViewBag.Title = "Batch Details";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+@Scripts.Render("~/Mousetrap")
+@Styles.Render("~/DataTablesCS")
+@Scripts.Render("~/DataTablesJS")
+<style>
+    .k-grid {
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+</style>
+<script>
+    $(document).ready(function () {
+        ShowBatchDetails();
+        GetDetails();
+    })
+</script>
+<script>
+    function ShowBatchDetails() {
+         var BatchComp = "@ViewBag.Token";
+         var xxx = "'";
+         var NameEmp = $('#txtSearch').val();
+         var table = $("#table1").DataTable({
+                        "destroy": true,
+                        "order": [[1, "id"]],
+                        "processing": true,
+                        "serverSide": true,
+                        "lengthChange": false,
+                        "filter": false,
+                        "orderMulti": false,
+                        "pageLength": 10,
+                        "ajax": {
+                            "url": "@Url.Action("GetBatchDetailsTask", "JobApplicant")",
+                            "type": "POST",
+                            "datatype": "json",
+                            "data": function (d) {
+                                return $.extend({}, d, {
+                                    "BatchComp": BatchComp,
+                                    "NameEmp": NameEmp
+                                });
+                            }
+                        },
+                        "columns": [
+                            { "data": "BatchEmp", "autoWidth": true },
+                            { "data": "NameEmp",  "autoWidth": true },
+                            { "data": "DateOfBirthEmp", "autoWidth": true },
+                            { "data": "InvitationDate", "autoWidth": true },
+                            { "data": "UpdatedBy", "autoWidth": true },
+                            { "data": "UpdatedDate", "autoWidth": true },
+                            //{ "data": "StatusEmp", "autoWidth": true },
+                            {
+                                "render": function (data, type, full, meta) {
+                                    if (full.StatusEmp == "COMING") {
+                                        return '<div style="color:white; background-color:green; text-align:center">' + full.StatusEmp+'</div>';
+                                    }
+                                    else if (full.StatusEmp == "ABSENT") {
+                                        return '<div style="color:white; background-color:red; text-align:center">' + full.StatusEmp + '</div>';
+                                    }
+                                    else {
+                                        return '<div style="color:white; background-color:gray; text-align:center">UNKNOWN</div>';
+                                    }
+                                }
+                            },
+                            //{
+                            //    "render": function (data, type, full, meta) {
+                            //        if (full.StatusEmp == "PENDING") {
+                            //            return '<input id="toggle-demo' + full.BatchEmp + '" class="my_switch" onchange="ChangeStateArrived(' + xxx + '' + full.BatchEmp + '' + xxx + ')" type="checkbox" data-toggle="toggle" data-on="Arrived" data-off="Pending" data-onstyle="success" data-offstyle="warning">';
+                            //        }
+                            //        else if (full.StatusEmp == "ARRIVED") {
+                            //            return '<input id="toggle-demo' + full.BatchEmp + '" class="my_switch" onchange="ChangeStatePending(' + xxx + '' + full.BatchEmp + '' + xxx + ')" type="checkbox" checked data-toggle="toggle" data-on="Arrived" data-off="Pending" data-onstyle="success" data-offstyle="warning">';
+                            //        }
+                            //        else {
+                            //            return '<input id="toggle-demo' + full.BatchEmp + '" class="my_switch" onchange="ChangeStateArrived(' + xxx + '' + full.BatchEmp + '' + xxx + ')" type="checkbox" data-toggle="toggle" data-on="Arrived" data-off="Pending" data-onstyle="success" data-offstyle="warning">';
+                            //        }
+                                    
+                            //    }
+                            //},
+                         ],
+                        //"fnDrawCallback": function() {
+                        //    $('.my_switch').bootstrapToggle();
+                        //},
+                    })
+        }
+</script>
+<script>
+
+    function ChangeStatePending(id)
+    {
+        var chkBool = document.getElementById('toggle-demo' + id).checked;
+        var data = "NO" + id;
+        SaveState(data);
+    }
+    function ChangeStateArrived(id)
+    {
+        var chkBool = document.getElementById('toggle-demo' + id).checked;
+        var data = "YES" + id;
+        SaveState(data);
+    }
+    function SaveState(data) {
+            $.ajax({
+            url: '@Url.Action("SaveState", "JobApplicant")' + "?BatchEmp=" + data,
+            type: 'GET',
+                success: function (result) {
+                    toastr.success(
+                        'Your Exit Permit has been submited',
+                        'Success',
+                        {
+                            timeOut: 2000,
+                            fadeOut: 2000,
+                            onHidden: function () {
+                                window.location.reload();
+                            }
+                        }
+                    );
+                },
+                error: function () {
+                    toastr.error("ERROR", "Oops something wrong");
+                }
+        });
+    }
+    function GetDetails(BatchComp) {
+       var BatchComp = "@ViewBag.Token2";
+       $.ajax({
+           url: '@Url.Action("GetBatchDetailsCount", "JobApplicant")' + "?BatchComp=" + BatchComp,
+           type: 'GET',
+           success: function (result) {
+               document.getElementById("TotalCandidate").innerHTML = "Total Candidate: " + result[0].TotalCandidate;
+               document.getElementById("Coming").innerHTML = "Coming: " + result[0].Coming; 
+               document.getElementById("Absent").innerHTML = "Absent: " + result[0].Absent; 
+               document.getElementById("Percentage").innerHTML = "Percentage: " +result[0].Percentage; 
+           },
+           error: function () {
+
+           }
+        });
+    }
+</script>
+<div class="row" id="rowBatch">
+    <div class="col-md-12">
+        <div class="box ShimanoBox">
+            <div class="box-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        @*@Html.Label("txtSearch", "Keyword :")*@
+                        @Html.Kendo().TextBox().Name("txtSearch").HtmlAttributes(new { @class = "form-control ShimanoTextBox", style = "width:100%", @onchange = "ShowBatchDetails()" })
+                    </div>
+                    <div class="col-md-6">
+                        <div class="col-md-3" id="TotalCandidate" style="background-color:dodgerblue; color:white; text-align:center"></div>
+                        <div class="col-md-3" id="Coming" style="background-color:mediumseagreen; color:white; text-align:center"></div>
+                        <div class="col-md-3" id="Absent" style="background-color:red; color:white; text-align:center"></div>
+                        <div class="col-md-3" id="Percentage" style="background-color:darkslategray; color:white; text-align:center"></div>
+                    </div>
+                </div>
+                <div class="container">
+                    <!-- Content here -->
+                </div>
+                <div id="rowBatchDetail1">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div style="width:100%; margin:0 auto; overflow-x:scroll">
+                                <table id="table1" class="table table-striped table-bordered dt-responsive nowrap" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th>No</th>
+                                            <th>Candidate Name</th>
+                                            <th>Birth Date</th>
+                                            <th>Invite Date</th>
+                                            <th>Verified By</th>
+                                            <th>Verified Date</th>
+                                            @*<th>Status</th>*@
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @using (Html.BeginForm("ExportJobApplicant", "JobApplicant", FormMethod.Post))
+                {
+                    <br/>
+                    <button class="btn btn-success" onclick="ExportExcel(0,0)"><i class="fa fa-file-excel-o"></i> Export Exel</button>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@{
+    Html.RenderPartial("_MDLoader");
+}

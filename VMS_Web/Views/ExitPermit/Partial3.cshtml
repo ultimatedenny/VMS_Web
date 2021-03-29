@@ -1,0 +1,82 @@
+﻿@model VMS.Web.Models.EPMaster
+@Scripts.Render("~/Mousetrap")
+@Styles.Render("~/DataTablesCS")
+@Scripts.Render("~/DataTablesJS")
+
+<script>
+    $(document).ready(function () {
+        $.ajax({
+                url: '@Url.Action("getApproverList", "MasterData")',
+                type: 'GET',
+                success: function (jsonRes) {
+                    //console.log(jsonRes[i]);
+                    var s = '<option value="-1">Select Approver</option>';
+                    for (var i = 0; i < jsonRes.length; i++) {
+                        s += '<option value="' + jsonRes[i].UseId + '">' + jsonRes[i].UseNam + '</option>';
+                    }
+                    $("#Approver").html(s);
+                }
+            });
+    })
+</script>
+    <div class="form-horizontal">
+        <form id="myForm1">
+
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            @Html.HiddenFor(model => model.MasterId)
+            @Html.HiddenFor(model => model.SENo)
+            @Html.HiddenFor(model => model.EPNo)
+            @Html.HiddenFor(model => model.UseDep)
+            @Html.HiddenFor(model => model.PlantID)
+            @Html.HiddenFor(model => model.Destination)
+            @Html.HiddenFor(model => model.Date)
+            @Html.HiddenFor(model => model.Out)
+            @Html.HiddenFor(model => model.ActOut)
+            @Html.HiddenFor(model => model.In)
+            @Html.HiddenFor(model => model.ActIn)
+            @Html.HiddenFor(model => model.CompTrans)
+            @Html.HiddenFor(model => model.CompTransTime)
+            @Html.HiddenFor(model => model.Approver)
+            @Html.HiddenFor(model => model.ExpireTicket)
+
+            <div class="form-group">
+                <label>Approver</label>
+                <small><i>*This can be changed based on Approver availability</i></small>
+                <select class="form-control form-control-sm" id="Approver"></select>
+            </div>
+
+        </form>
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <a href="#" id="btnSubmit" class="btn btn-success btn-block">
+                    <span>Update</span>
+                </a>
+            </div>
+        </div>
+
+    </div>
+    <script>
+    $("#btnSubmit").click(function () {
+        var myformdata = $("#myForm1").serialize();
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("Update", "ExitPermit", new { area=""})',
+            data: myformdata,
+            success: function () {
+                alert("UPDATING SUCCESS")
+                $("#myModal1").modal("hide");
+                location.reload();
+            },
+            error: function () {
+                alert("UPDATING SUCCESS")
+                $("#myModal1").modal("hide");
+                location.reload();
+            }
+        })
+    })
+    </script>
+
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>

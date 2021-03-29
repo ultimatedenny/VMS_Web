@@ -1,0 +1,151 @@
+﻿@model VMS.Web.Models.LoginViewModel
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+
+    .box-body{
+        padding : 0;
+
+    }
+    .example3 {
+ height: 200px;
+ overflow: hidden;
+ position: relative;
+}
+</style>
+<style>
+.bottomright {
+  position: absolute;
+  bottom: 8px;
+  right: 20%;
+  font-size: 18px;
+}
+</style>
+
+<div class="row">
+    <div class="col-md-8 col-md-offset-2">
+
+        <br /><br /><br /><br /><br /><br />
+        <div class="box ShimanoBox">
+            <div class="box-body no-padding">
+                <div class="row">
+                    <div class="col-md-8 col-sm-8">
+                        <div class="pad box-pane-right " style="min-height: 200px;background-color: white">
+                            <div class="description-block margin-bottom">
+                                <div class="sparkbar pad" data-color="#fff"><canvas width="34" height="30" style="display: inline-block; width: 34px; height: 30px; vertical-align: top;"></canvas></div>
+                                <img src="@Url.Content("~/Content/Images/shimanoLogo.png")" width="40%"/>
+                                <h4 style="margin-top:0; color:#00A9E0">Closer to Nature, Closer to People.</h4>
+                                <div class="bottomright">
+                                    
+                                </div>
+                               
+                                @*<marquee behavior="scroll" direction="up" style="height:200px;" class="text-center"  scrollamount="2">
+                                    <b>Mission Statement</b><br />
+                                    To promote health and happiness through the enjoyment of nature and the world around us.
+                                    <br /><br />
+                                    <b>Business Policy</b><br />
+                                    We strive to provide quality products and services that are reliable and trustworthy.<br />
+                                    We pledge to continually increase our corporate value and to ensure corporate management worthy of the trust placed in us.<br />
+                                    We strive to provide a fair and vibrant work environment where all can share in the pleasure and satisfaction that comes with achievement.<br />
+                                    We pledge to be a good corporate citizen, by preserving the environment and contributing to the prosperity of our community.<br />
+                                </marquee>*@
+                            </div>
+                            <!-- /.description-block -->
+                        </div>
+                    </div>
+                    <!-- /.col -->
+                    <div class="col-md-4 col-sm-4">
+                        <div class="pad box-pane-right " style="min-height: 280px; background-color: @System.Configuration.ConfigurationManager.AppSettings["BGMenuLive"]">
+                            <div class="description-block margin-bottom">
+                                <div class="col-md-12 text-justify">
+                                    @using (Html.BeginForm("Index", "Home", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", @autocomplete = "off", role = "form" }))
+                                    {
+                                        @Html.HiddenFor(m => m.isWinAuth)
+                                        @Html.AntiForgeryToken()
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                @Html.LabelFor(m => m.UseID, "Windows ID : ", new { style="color:white" })<br />
+                                                <div class="k-content">
+                                                    @(Html.Kendo()
+        .TextBoxFor(m => m.UseID)
+        .HtmlAttributes(new { @class = "form-control ShimanoTextBox", style = "width:100%", required = "required", data_required_msg = "Please Fill the Name" }))
+                                                    @Html.ValidationMessageFor(m => m.UseID, "", new { @class = "text-danger" })
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <br />
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                @Html.LabelFor(m => m.UsePass, "Password : ", new { style = "color:white" })<br />
+                                                <div class="k-content">
+                                                    @(Html.Kendo()
+        .TextBoxFor(m => m.UsePass)
+        .HtmlAttributes(new { @class = "form-control ShimanoTextBox", style = "width:100%", required = "required", data_required_msg = "Please Fill the Password", type="password" }))
+                                                    @Html.ValidationMessageFor(m => m.UsePass, "", new { @class = "text-danger" })
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+                                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                        <br />
+                                        <div class="form-group">
+                                            <div class="col-md-12"><input type="checkbox" id="isWinToggle" name="isWinToggle" checked data-toggle="toggle" data-on="<i class='fa fa-windows'></i> Windows User" data-off="<i class='fa fa-user'></i> Normal User" data-onstyle="info" data-offstyle="success" data-width="100%"></div>
+                                        </div>
+                                        <br />
+                                        <div class="form-group">
+                                            <div class="col-md-12">
+                                                <input type="submit" value="Log in" class="btn btn-info btn-block" />
+                                            </div>
+                                        </div>
+
+
+                                    }
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <!-- /.col -->
+                </div>
+                <!-- /.row -->
+            </div>
+            <!-- /.box-body -->
+        </div>
+
+
+    </div>
+</div>
+@{
+    if (TempData["ERROR"] != null)
+    {
+        <script type="text/javascript">
+                toastr.error('@TempData["ERROR"]', "ERROR");
+        </script>
+    }
+    if (TempData["SUCCESS"] != null)
+    {
+        <script type="text/javascript">
+                toastr.error('@TempData["SUCCESS"]',"SUCCESS");
+        </script>
+    }
+
+
+}
+<script>
+    $(document).ready(function () {
+        $('#@Html.IdFor(m=>m.isWinAuth)').val(true)
+    })
+    $(function () {
+        $('#isWinToggle').change(function () {
+            $('#@Html.IdFor(m=>m.isWinAuth)').val($(this).prop('checked'))
+        })
+    })
+</script>
+
+
+
+

@@ -1,0 +1,171 @@
+﻿@model VMS.Web.Models.ImportExcel
+@{
+    ViewBag.Title = "Job Applicant";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+@Scripts.Render("~/Mousetrap")
+@Styles.Render("~/DataTablesCS")
+@Scripts.Render("~/DataTablesJS")
+
+<style>
+    .k-grid {
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+</style>
+<script>
+    $(document).ready(function () {
+        ShowBatch();
+    })
+</script>
+<script>
+    function ShowBatch() {
+            var xxx = "'";
+            var dateFrom = $("#start1").val();
+            var dateTo = $("#end1").val();
+            var BatchId = "JA";
+            var table = $("#table1").DataTable({
+                "destroy": true,
+                "order": [[1, "id"]],
+                "processing": true,
+                "serverSide": true,
+                "lengthChange": false,
+                "filter": false,
+                "orderMulti": false,
+                "pageLength": 10,
+                "ajax": {
+                    "url": "@Url.Action("GetBatchListTask", "JobApplicant")",
+                    "type": "POST",
+                    "datatype": "json",
+                    "data": function (d) {
+                        return $.extend({}, d, {
+                            "BatchId": BatchId,
+                            "DateFrom": dateFrom,
+                            "DateTo": dateTo
+                        });
+                    }
+                },
+                "columns": [
+                    { "data": "BatchComp", "autoWidth": true },
+                    { "data": "InvitationDate",  "autoWidth": true },
+                    { "data": "RequestDate", "autoWidth": true },
+                    { "data": "TotalCandidate", "autoWidth": true },
+                    { "data": "Coming", "autoWidth": true },
+                    { "data": "Absent", "autoWidth": true },
+                    { "data": "Percentage", "autoWidth": true },
+                    { "data": "StatusBatch", "autoWidth": true },
+                    {
+                        "render": function (data, type, full, meta) {
+                            return '<button class="btn btn-success"  onclick="SeeDetails(' + xxx + '' + full.BatchComp + '' + xxx + ')"><i class="fa fa-eye"></i></button>';
+                        }
+                    },
+                ]
+            })
+        }
+</script>
+<script>
+    var SeeDetails = function (id){
+            var url = '@Url.Action("BatchDetails", "JobApplicant")' + "?BatchId=" + id;
+            window.location.replace(url);
+    }
+    function startChangeHis() {
+        var endPicker = $("#end1").data("kendoDatePicker"),
+            startDate = this.value();
+
+        if (startDate) {
+            startDate = new Date(startDate);
+            startDate.setDate(startDate.getDate());
+            endPicker.min(startDate);
+        }
+        ShowBatch();
+    }
+</script>
+<div class="row">
+    <div class="col-md-12">
+        <div class="box ShimanoBox">
+            <div class="box-body">
+                <div class="row">
+                    <div class="col-md-12" ">
+                        <h3 style="text-align: center; color: white; background-color: dodgerblue"><b>JOB APPLICANT</b></h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row" id="rowBatch">
+    <div class="col-md-12">
+        <div class="box ShimanoBox">
+            <div class="box-body">
+                <div id="rowBatchDetail1">
+                    <div class="col-md-6">
+                        <div class="k-content">
+                            @Html.Label("StartDateTxt", "Start Date :")
+                            @(Html.Kendo().DatePicker()
+                                            .Name("start1")
+                                            .Start(CalendarView.Month)
+                                            .Depth(CalendarView.Month)
+                                            .Max(DateTime.Today).Events(e => e.Change("startChangeHis"))
+                                            .Format("yyyy-MM-dd")
+                                            .Value(DateTime.Today.AddYears(0).AddMonths(0).AddDays(-DateTime.Today.Day+1))
+                                            .HtmlAttributes(new { style = "width: 100%", title = "datepicker", @class = "form-control" })
+                                    )
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="k-content">
+                            @Html.Label("EndDateTxt", "End Date :")
+                            @(Html.Kendo().DatePicker()
+                                        .Name("end1")
+                                        .Depth(CalendarView.Month)
+                                        .Min(DateTime.Today.AddYears(-1))
+                                        .Max(DateTime.Today).Events(e => e.Change("ShowBatch"))
+                                        .Format("yyyy-MM-dd")
+                                        .Value(DateTime.Today)
+                                        .HtmlAttributes(new { style = "width: 100%", title = "datepicker", @class = "form-control" })
+                                    )
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div style="width:100%; margin:0 auto; overflow-x:scroll">
+                                <table id="table1" class="table table-striped table-bordered dt-responsive nowrap" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th>No</th>
+                                            <th>Invitation Date</th>
+                                            <th>Request Date</th>
+                                            <th>Total Candidate</th>
+                                            <th>Coming</th>
+                                            <th>Absent</th>
+                                            <th>Percentage</th>
+                                            <th>Status</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    @*<div class="row">
+                        <div class="col-md-6">
+                            @using (Html.BeginForm("Task", "JobApplicant", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                            {
+                                @Html.TextBoxFor(m => m.file, new { type = "file" })
+                                <br />
+                                <button class="btn btn-primary" id="submitButton" type="submit">Submit</button>
+                                @Html.ValidationMessageFor(model => model.file)
+                            }
+                        </div>
+                    </div>*@
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@{
+    Html.RenderPartial("_MDLoader");
+}
